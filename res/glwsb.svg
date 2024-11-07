@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 200">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+  <g id="_图层-1" data-name="图层-1">
+    <g>
+      <path class="cls-1" d="M420,0h-40v100L330,0h-50l100,200h40V0Z"/>
+      <path class="cls-1" d="M1020,0v40h-140V0h140Z"/>
+      <path class="cls-1" d="M580,0v40h-140V0h140Z"/>
+      <path class="cls-1" d="M740,0v40h-140V0h140Z"/>
+      <path class="cls-1" d="M740,70h-140v40l140,90v-50l-62.22-40h62.22v-40Z"/>
+      <path class="cls-1" d="M831.72,0l28.28,28.28-70.71,70.71-28.28-28.29L831.72,0Z"/>
+      <path class="cls-1" d="M831.72,101.01l28.28,28.28-70.71,70.71-28.28-28.28,70.71-70.71Z"/>
+      <path class="cls-1" d="M1020,80v40h-140v-40h140Z"/>
+      <path class="cls-1" d="M580,80v40h-140v-40h140Z"/>
+      <path class="cls-1" d="M1020,160v40h-140v-40h140Z"/>
+      <path class="cls-1" d="M580,160v40h-140v-40h140Z"/>
+      <path class="cls-1" d="M260,60v140h-40V60h40Z"/>
+      <path class="cls-1" d="M260,0v40h-40V0h40Z"/>
+      <path class="cls-1" d="M200,0v200h-40V0h40Z"/>
+      <path class="cls-1" d="M140,0h-30.69l-9.31,8.47L28.28,73.66l-17.56,15.97L0,99.38l9.28,8.44,19,17.27,71.72,65.17,10.72,9.74h29.28v-90.9h-40v29.74l-43.44-39.46,69.31-63.01h14.12V0Z"/>
+    </g>
+  </g>
+</svg>

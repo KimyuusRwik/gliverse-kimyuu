@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- 网页的字符编码和视口设置 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gLiVeRsE - Kimyuu</title>
+    <!-- 引入字体样式 -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- 内联样式 -->
+    <style>
+        /* 平滑滚动效果 */
+        html {
+            scroll-behavior: smooth;
+            height: 100%; /* 确保 html 和 body 高度为 100% */
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #2b2b2b;
+            color: #ffffff;
+            min-height: 100%;
+            position: relative;
+            overflow-x: hidden;
+            padding-bottom: 0px; /* 为底部留出空间，值可根据需要调整 */
+        }
+
+        /* 背景视频样式 */
+        .background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 确保视频覆盖整个容器 */
+            z-index: -1; /* 使视频在内容后面 */
+        }
+
+        /* 导航栏样式 */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Logo (如果有的话) */
+        nav .logo {
+            flex: 1;
+            padding-left: 20px;
+        }
+
+        /* 菜单图标（用于移动设备） */
+        .menu-icon {
+            display: none;
+            font-size: 30px;
+            cursor: pointer;
+            color: #ffffff;
+            padding: 0 20px;
+        }
+
+        /* 导航链接容器 */
+        .nav-links {
+            display: flex;
+            flex: 2;
+            justify-content: center;
+        }
+
+        /* 导航链接 */
+        .nav-links a {
+            margin: 0 20px;
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+
+        /* 导航链接悬停效果 */
+        .nav-links a:hover {
+            color: #f0a500;
+        }
+
+        /* Section 样式 */
+        section {
+            padding: 0; /* 移除内边距 */
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            max-width: 100%; /* 扩展到全宽 */
+            margin: 0;
+            margin-top: 0px; /* 添加上边距，避免内容被导航栏遮挡 */
+            z-index: 1; /* 确保内容在视频之上 */
+        }
+
+        .section-content {
+            padding: 0px 20px; /* 将内边距应用于内容容器 */
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(43, 43, 43, 0); /* 半透明灰色背景 */
+        }
+
+        .section-header {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        /* 展开内容的样式 */
+        .details {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: max-height 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
+            width: 100%;
+            background-color: rgba(150, 150, 150, 0.3); /* 半透明亮青色 */
+            box-sizing: border-box;
+        }
+
+        .details.show {
+            opacity: 1;
+            transform: scaleY(1);
+            max-height: 1000px; /* 确保足够大以容纳内容 */
+        }
+
+        .details-content {
+            padding: 20px; /* 添加内边距，使内容不贴边 */
+            max-width: 800px;
+            margin: 0 auto;
+            box-sizing: content-box;
+            text-align: left;
+        }
+
+        /* 展开链接的样式 */
+        a.section-link {
+            cursor: pointer;
+            color: #f0a500;
+            font-size: 4rem;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        a.section-link:hover {
+            color: #ffffff;
+        }
+
+        /* 图片的样式 */
+        .placeholder-image {
+            display: block; /* 将图片设为块级元素 */
+            margin: 20px auto; /* 水平居中图片 */
+            width: 100%;
+            max-width: 1280px;
+            height: auto;
+            background-color: #ffffff;
+            cursor: pointer; /* 鼠标悬停时显示为可点击 */
+        }
+
+        /* 图片的样式 */
+        .placeholder-image2 {
+            display: block; /* 将图片设为块级元素 */
+            margin: 20px auto; /* 水平居中图片 */
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            background-color: #ffffff;
+            cursor: pointer; /* 鼠标悬停时显示为可点击 */
+        }
+
+        /* 视频的样式 */
+        .placeholder-video {
+            display: block;
+            margin: 20px auto;
+            width: 100%;
+            max-width: 1280px;
+            height: auto;
+            background-color: #000;
+        }
+
+        /* 模态窗口的样式 */
+        .modal {
+            display: none; /* 确保模态窗口初始状态隐藏 */
+            position: fixed;
+            z-index: 100; /* 确保在最上层 */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9); /* 半透明黑色背景 */
+            align-items: center; /* 垂直居中 */
+            justify-content: center; /* 水平居中 */
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            animation-name: zoom;
+            animation-duration: 0.6s;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #ffffff;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+            z-index: 101; /* 确保在模态窗口内容的上方 */
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @keyframes zoom {
+            from {transform: scale(0)}
+            to {transform: scale(1)}
+        }
+
+        /* 底部区域样式 */
+        footer {
+            position: relative;
+            background-color: #f0a500; /* 黄色背景 */
+            color: #2b2b2b; /* 深色文字 */
+            padding: 20px;
+            text-align: center;
+            z-index: 1; /* 确保在视频之上 */
+        }
+
+        footer a {
+            color: #2b2b2b;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .section-image {
+            display: block;
+            margin: 10px auto 10px auto;
+            /* margin: 20px auto 10px auto; 上、右、下、左的外边距 */
+            width: 100%;
+            max-width: 400px; /* 调整图片的最大宽度 */
+            height: auto;
+            /* 您可以在这里调整图片大小、内边距、外边距等参数 */
+        }
+
+        .section-image2 {
+            display: block;
+            margin: 10px auto 10px auto;
+            /* margin: 20px auto 10px auto; 上、右、下、左的外边距 */
+            width: 100%;
+            max-width: 200px; /* 调整图片的最大宽度 */
+            height: auto;
+            /* 您可以在这里调整图片大小、内边距、外边距等参数 */
+        }
+
+        /* 下载链接的样式 */
+        .download-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f0a500;
+            color: #2b2b2b;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .download-link:hover {
+            background-color: #e59400;
+        }
+
+        /* 响应式样式 */
+        @media screen and (max-width: 768px) {
+            /* 显示菜单图标 */
+            .menu-icon {
+                display: block;
+            }
+
+            /* 隐藏导航链接 */
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background-color: rgba(0, 0, 0, 0.9);
+                position: absolute;
+                top: 60px; /* 根据导航栏的高度调整 */
+                left: 0;
+            }
+
+            .nav-links a {
+                margin: 15px 0;
+                text-align: center;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 背景视频 -->
+    <video autoplay muted loop playsinline class="background-video">
+        <source src="res/wy.mp4" type="video/mp4">
+        您的浏览器不支持 HTML5 视频。
+    </video>
+
+    <!-- 导航栏 汉堡logo--> 
+    <!-- <nav>
+        <div class="logo">
+
+        </div>
+        <div class="menu-icon" onclick="toggleNav()">
+            &#9776; 
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="#resume" onclick="smoothScroll(event, 'resume'); toggleNav();">Resume</a>
+            <a href="#cg" onclick="smoothScroll(event, 'cg'); toggleNav();">CG Art</a>
+            <a href="#setsuei" onclick="smoothScroll(event, 'setsuei'); toggleNav();">Setsuei</a>
+            <a href="#TA" onclick="smoothScroll(event, 'TA'); toggleNav();">TA</a>
+            <a href="#dit" onclick="smoothScroll(event, 'dit'); toggleNav();">DIT</a>
+            <a href="#photography" onclick="smoothScroll(event, 'photography'); toggleNav();">Photography</a>
+            <a href="#music & sound" onclick="smoothScroll(event, 'music & sound'); toggleNav();">Music & Sound</a>
+            <a href="#design" onclick="smoothScroll(event, 'design'); toggleNav();">Design Works</a>
+            <a href="#articles" onclick="smoothScroll(event, 'articles'); toggleNav();">Articles</a>
+        </div>
+    </nav> -->
+    
+    <br /><br /><br />
+
+    <img src="res/glwsb.svg" alt="Section Image" class="section-image">
+    <img src="res/IMG_0251(20231103-195201)_00001.png" alt="Section Image" class="section-image2">
+
+    <!-- Section: GLIVERSE Team Introduction -->
+    <!-- <section id="gliverse-intro">
+        <div class="section-content"> -->
+            <!-- <h2 class="section-header">Team Introduction</h2> -->
+            <!-- <p>GLIVERSE is a team about lots of creations, such as illustration, concept, development, motion graphics, design, music, and so on.</p>
+            <p>Our thinking is influenced by physics and philosophy, so we are more committed to creating rational and natural content. These can be very impressive, these are our expression.</p>
+            <p>We are all students learning everything that can be useful to our creation.</p>
+        </div>
+    </section> -->
+
+    <br /><br /><br />
+
+    <!-- Section: Resume -->
+    <section id="resume">
+        <div class="section-content">
+            <a class="section-link" onclick="toggleSection('resume-details')">Resume</a>
+        </div>
+        <div id="resume-details" class="details">
+            <div class="details-content">
+                <a href="res/简历.pdf" class="download-link">个人简历</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: CG Art -->
+    <section id="cg">
+        <div class="section-content">
+            <a class="section-link" onclick="toggleSection('cg-details')">CG Art</a>
+        </div>
+        <div id="cg-details" class="details">
+            <div class="details-content">
+                <a href="https://pan.baidu.com/s/1aO2NdeiNAAhORtRLGXHH5g?pwd=rne3" class="download-link">D.REAlM_5.1_remix_H.256</a>
+                <video controls class="placeholder-video">
+                    <source src="res/geonode.mov" type="video/mp4">
+                    您的浏览器不支持 HTML5 视频。
+                </video>
+                <img src="res/Still 2024-10-21 003333_1.67.1.jpg" class="placeholder-image" onclick="openModal(this.src)">
+                <img src="res/Still 2024-10-21 003333_1.70.1.jpg" class="placeholder-image" onclick="openModal(this.src)">
+                <img src="res/Still 2024-10-21 003333_1.72.1.jpg" class="placeholder-image" onclick="openModal(this.src)">
+                <img src="res/Still 2024-10-21 003333_1.74.1.jpg" class="placeholder-image" onclick="openModal(this.src)">
+                <img src="res/Still 2024-10-21 003333_1.75.1.jpg" class="placeholder-image" onclick="openModal(this.src)">
+                <img src="res/Still 2024-10-21 003333_1.76.1.jpg" class="placeholder-image" onclick="openModal(this.src)">
+                <img src="res/Still 2024-10-21 003333_1.78.1.jpg" class="placeholder-image" onclick="openModal(this.src)">
+                <img src="res/Still 2024-10-21 003333_1.79.1.jpg" class="placeholder-image" onclick="openModal(this.src)">
+                <img src="res/Still 2024-10-21 003333_1.80.1.jpg" class="placeholder-image" onclick="openModal(this.src)">
+                <img src="res/Image0199.jpg" class="placeholder-image" onclick="openModal(this.src)">
+
+                <table>
+                    <tr>
+                        <td>
+                            <img src="res/SD作品1.png" class="placeholder-image" onclick="openModal(this.src)">
+                        </td>
+                        <td>
+                            <img src="res/SD作品2.png" class="placeholder-image" onclick="openModal(this.src)">
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td>
+                            <img src="res/SP作品1.png" class="placeholder-image" onclick="openModal(this.src)">
+                        </td>
+                        <td>
+                            <img src="res/SP作品3.png" class="placeholder-image" onclick="openModal(this.src)">
+                        </td>
+                    </tr>
+                </table>
+                <img src="res/blender moutain2.png" class="placeholder-image" onclick="openModal(this.src)">
+                <img src="res/blender moutain.png" class="placeholder-image" onclick="openModal(this.src)">
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Satsuei -->
+    <section id="setsuei">
+        <div class="section-content">
+            <a class="section-link" onclick="toggleSection('setsuei-details')">Setsuei</a>
+        </div>
+        <div id="setsuei-details" class="details">
+            <div class="details-content">
+                <table>
+                    <tr>
+                        <td>
+                            <img src="res/01comp.png" class="placeholder-image" onclick="openModal(this.src)">
+                        </td>
+                        <td>
+                            <img src="res/01raw.png" class="placeholder-image" onclick="openModal(this.src)">
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td>
+                            <img src="res/02comp.png" class="placeholder-image" onclick="openModal(this.src)">
+                        </td>
+                        <td>
+                            <img src="res/02raw.png" class="placeholder-image" onclick="openModal(this.src)">
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td>
+                            <img src="res/03comp_00051.png" class="placeholder-image" onclick="openModal(this.src)">
+                        </td>
+                        <td>
+                            <img src="res/03raw_00051.png" class="placeholder-image" onclick="openModal(this.src)">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: TA -->
+    <section id="TA">
+        <div class="section-content">
+            <a class="section-link" onclick="toggleSection('TA-details')">TA</a>
+        </div>
+        <div id="TA-details" class="details">
+            <div class="details-content">
+                <a>全角度完美阴影</a>
+                <video controls class="placeholder-video">
+                    <source src="res/QQ2024810-54423.mp4" type="video/mp4">
+                    您的浏览器不支持 HTML5 视频。
+                </video>
+                <a>插画绘画质感着色</a>
+                <video controls class="placeholder-video">
+                    <source src="res/toonshader_pianting_0001.mov" type="video/mp4">
+                    您的浏览器不支持 HTML5 视频。
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: dit -->
+    <section id="dit">
+        <div class="section-content">
+            <a class="section-link" onclick="toggleSection('dit-details')">DIT</a>
+        </div>
+        <div id="dit-details" class="details">
+            <div class="details-content">
+                <img src="res/image.png" class="placeholder-image2" onclick="openModal(this.src)">
+            </div>
+        </div>
+    </section>
+    
+    <!-- Section: Photography -->
+    <section id="photography">
+        <div class="section-content">
+            <a class="section-link" onclick="toggleSection('photography-details')">Photography</a>
+        </div>
+        <div id="photography-details" class="details">
+            <div class="details-content">
+                <table>
+                    <tr>
+                        <td>
+                            <img src="res/IMG_8268.JPG" class="placeholder-image" onclick="openModal(this.src)">
+                        </td>
+                        <td>
+                            <img src="res/IMG_8269.JPG" class="placeholder-image" onclick="openModal(this.src)">
+                        </td>
+                    </tr>
+                </table>
+                <img src="res/IMG_8270.JPG" class="placeholder-image" onclick="openModal(this.src)">
+                <img src="res/IMG_8271.JPG" class="placeholder-image" onclick="openModal(this.src)">
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Music & Mix -->
+    <section id="music & sound">
+        <div class="section-content">
+            <a class="section-link" onclick="toggleSection('music & sound-details')">Music & Sound</a>
+        </div>
+        <div id="music & sound-details" class="details">
+            <div class="details-content">
+                <a href="https://pan.baidu.com/s/1NRY4R1ZkhJf8e2WvfbZjdQ?pwd=es74" class="download-link">D.REAlM_Music_5.1&DA</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Design Works -->
+    <section id="design">
+        <div class="section-content">
+            <a class="section-link" onclick="toggleSection('design-details')">Design Works</a>
+        </div>
+        <div id="design-details" class="details">
+            <div class="details-content">
+                <img src="res/QQ20241022-163014.png" class="placeholder-image" onclick="openModal(this.src)">
+                <img src="res/06e1125dee1fa88819d04b1ee4e73a0f.png" class="placeholder-image" onclick="openModal(this.src)">
+                <img src="res/IMG_0251(20231103-195201).JPG" class="placeholder-image" onclick="openModal(this.src)">
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Articles -->
+    <section id="articles">
+        <div class="section-content">
+            <a class="section-link" onclick="toggleSection('articles-details')">Articles</a>
+        </div>
+        <div id="articles-details" class="details">
+            <div class="details-content">
+                <a href="res/HFR HDR 立体NPR动画制作流程与美学综述.pdf" class="download-link">HFR HDR 立体NPR动画制作流程与美学综述</a>
+            </div>
+        </div>
+    </section>
+
+    <br /><br /><br /><br />
+
+    <!-- Section: gliverse -->
+    <section id="gliverse">
+        <div class="section-content">
+            <a class="section-link">&gtGLIVERSE</a>
+        </div>
+    </section>
+
+    <!-- Section: project animzenith -->
+    <section id="project animzenith">
+        <div class="section-content">
+            <a class="section-link">&gtProject AnimZenith</a>
+        </div>
+    </section>
+
+    <br /><br /><br /><br />
+
+    <!-- 底部区域 -->
+    <footer>
+        <p>Connect with me:</p>
+        <a href="mailto:idkodkarasu@gmail.com">idkodkarasu@gmail.com</a> |
+        <a href="https://space.bilibili.com/10760674" target="_blank">Bilibili</a> |
+        <a >QQ:898529928</a> |
+        <a >WeChat:IDKxWechat</a>
+    </footer>
+
+    <!-- 模态窗口 -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <!-- 脚本部分 -->
+    <script>
+        // 切换导航菜单的函数
+        function toggleNav() {
+            const navLinks = document.getElementById('navLinks');
+            if (navLinks.style.display === 'flex') {
+                navLinks.style.display = 'none';
+            } else {
+                navLinks.style.display = 'flex';
+            }
+        }
+
+        // 切换展开内容的函数
+        function toggleSection(id) {
+            const section = document.getElementById(id);
+
+            if (section.classList.contains('show')) {
+                // 如果当前部分已经展开，则收起它
+                section.classList.remove('show');
+                section.style.maxHeight = null;
+            } else {
+                // 收起所有已展开的部分
+                const expandedSections = document.querySelectorAll('.details.show');
+                expandedSections.forEach((expandedSection) => {
+                    expandedSection.classList.remove('show');
+                    expandedSection.style.maxHeight = null;
+                });
+
+                // 展开当前点击的部分
+                section.classList.add('show');
+                section.style.maxHeight = section.scrollHeight + 'px';
+            }
+        }
+
+        // 平滑滚动的函数
+        function smoothScroll(event, targetId) {
+            event.preventDefault();
+            const target = document.getElementById(targetId);
+            const headerOffset = 70; // 根据导航栏的实际高度调整
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+
+        // 打开模态窗口的函数
+        function openModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'flex';
+            modalImg.src = src;
+        }
+
+        // 关闭模态窗口的函数
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+        }
+
+        // 点击模态窗口的背景部分关闭模态窗口（可选）
+        const modal = document.getElementById('imageModal');
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        // 按下 Esc 键关闭模态窗口（可选）
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
